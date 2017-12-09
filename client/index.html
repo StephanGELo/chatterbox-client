@@ -23,23 +23,18 @@
     <!-- your scripts -->
     <script src="env/config.js"></script>
     <script src="scripts/app.js"></script>
+    <!-- <script src="http://parse.sfs.hackreactor.com/app.js"></script> -->
   </head>
   <body>
     <div id="main">
 
       <h1>chatterbox</h1>
-      <form>
         <label> Room
-          <select>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
+          <select class="rooms">
           </select>
         </label>
         <textarea name="message">Add your message here</textarea>
         <button id="send" class="submit">send</button>
-      </form>
     </div>
     <div id="chats"> 
       <section id="roomSelect">

@@ -1,15 +1,16 @@
 var app = {};// YOUR CODE HERE:
 app.init = function() {
-  app.handleUsernameClick();
-  app.handleSubmit();
-
+  $(document).ready(function() {
+    app.fetch();
+    app.handleSubmit();
+  });
 
 };
 app.server = 'http://parse.sfs.hackreactor.com/chatterbox/classes/messages';
 app.send = function(message) {
    
   $.ajax({
-    url: app.server,
+    url: 'http://parse.sfs.hackreactor.com/chatterbox/classes/messages',
     type: 'POST',
     data: message,
     contentType: 'application/json',
@@ -25,9 +26,8 @@ app.send = function(message) {
 };
 app.fetch = function() {
   $.ajax({
-    url: app.server,
+    url: 'http://parse.sfs.hackreactor.com/chatterbox/classes/messages',
     type: 'GET',
-    data: message,
     contentType: 'application/json',
     success: function(data) {
       app.renderMessage(data); 
@@ -50,23 +50,50 @@ app.clearMessages = function() {
 };
 
 app.renderMessage = function (message) {
-  $('#chats').append($('<div class="chat"></div>'));
-  $('#chats .chat').append($('<p class="username">message.username</p>'));
-  $('#chats .chat').append($('<p id="message">message.text</p>'));
+  var messageList = message.results;
+  var roomList = {};
+  console.log (messageList);
+  for (var i = messageList.length - 1; i > messageList.length - 21; i--) {
+    var text = messageList[i].text;
+    var username = messageList[i].username;
+    var time = messageList[i].createdAt;
+    if (roomList[messageList[i].roomname] === undefined) {
+      roomList[messageList[i].roomname] = messageList[i].roomname;
+    }
+    $('#chats').append($('<p class=' + username + '"time">' + time + '</p>'));
+    $('#chats').append($('<a class=' + username + '>' + username + '</a>'));
+    $('#chats').append($('<p class=' + username + ' id="message">' + text + '</p>'));
+  }
+  app.handleUsernameClick();
+  app.renderRoom(roomList);
 };
 
-app.renderRoom = function (roomName) {
-  $('#roomSelect').append($('<div class=roomName></div>'));
-
+app.renderRoom = function (roomList) {
+  for (var key in roomList) {
+    $('.rooms').append($('<option value=' + roomList[key] + '>' + roomList[key] + '</option>'));
+  }
 };
 
 app.handleUsernameClick = function () {
-  $('.username').on('click', function () {
+  $('a').on('click', function () {
+    alert('Event trigger');
+    //need to figure out manipulate data fetch from server
+    // create a friendlist for every user
+    // add a friend to current user's friendlist
+    // show it on page
   });
 };
 
 app.handleSubmit = function () {
-  $('#send .submit').on('click', function () {
-    app.send($('textarea').val());
+  var message = {
+    username: 'shawndrost',
+    text: 'trololo',
+    roomname: '4chan'
+  };
+  $('#send.submit').on('click', function () {
+    
+    app.send(JSON.stringify(message));
   });
 };
+
+app.init();
