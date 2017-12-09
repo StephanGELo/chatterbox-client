@@ -1,38 +1,39 @@
 var app = {};// YOUR CODE HERE:
-app.init = function() {};
+app.init = function() {
+  app.handleUsernameClick();
+  app.handleSubmit();
+
+
+};
 app.server = 'http://parse.sfs.hackreactor.com/chatterbox/classes/messages';
 app.send = function(message) {
-  // var message = {
-  //   username: prompt('What is your name?') || 'anonymous',
-  //   text: $('textarea').val(),
-  //   roomname: $('select').val()
-  // };  
+   
   $.ajax({
     url: app.server,
     type: 'POST',
     data: message,
     contentType: 'application/json',
     success: function(data) {
-      app.send(data); 
+      app.fetch(); 
       console.log ('chatterbox: Message sent');
     },
-    // success: app.send,
+
     error: function(data) {
       console.error('chatterbox: Failed to send message', data);
     }
   });
 };
-app.fetch = function(message) {
+app.fetch = function() {
   $.ajax({
     url: app.server,
     type: 'GET',
     data: message,
     contentType: 'application/json',
     success: function(data) {
-      app.fetch(data); 
+      app.renderMessage(data); 
       console.log ('chatterbox: Message sent');
     },
-    // success: app.send,
+    
     error: function(data) {
       console.error('chatterbox: Failed to send message', data);
     }
@@ -47,29 +48,25 @@ app.clearMessages = function() {
     }
   }
 };
- 
-$(document).ready(function() {
 
-  $('button').on('click', function(event) {
-  // add an click event on submit button
-    alert('yes');
-    sendMessage();
+app.renderMessage = function (message) {
+  $('#chats').append($('<div class="chat"></div>'));
+  $('#chats .chat').append($('<p class="username">message.username</p>'));
+  $('#chats .chat').append($('<p id="message">message.text</p>'));
+};
+
+app.renderRoom = function (roomName) {
+  $('#roomSelect').append($('<div class=roomName></div>'));
+
+};
+
+app.handleUsernameClick = function () {
+  $('.username').on('click', function () {
   });
+};
 
-  var sendMessage = function() {
-  // get the text in the textarea element
-  // create an element with the text
-  // append the new created element to the '#chats' element
-    var msg = $('textarea').val();
-    var $msgDisplay = document.createElement('div');
-    $msgDisplay.addClass('a');
-    $msgDisplay.text = msg;
-    
-    $('#chats').append($('.a'));
-    console.log ($msgDisplay);
-  };
-
-
-
-
-});
+app.handleSubmit = function () {
+  $('#send .submit').on('click', function () {
+    app.send($('textarea').val());
+  });
+};
