@@ -74,6 +74,15 @@ textarea {
     font-weight: 800;
 }
 
+.isFriend {
+  font-weight: bold;
+  color: red;
+}
+
+a {
+  text-decoration: underline;
+}
+
 .chat:hover {
     background-color: #ddd;
 }

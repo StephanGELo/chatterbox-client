@@ -81,12 +81,10 @@ app.clearMessages = function() {
 app.renderMessage = function (message) {
   var messageList = message.results;
   for (var i = messageList.length - 1; i > 0; i--) {
-    var text = messageList[i].text;
-    if (text && text.includes('<script>')) {
-      text = 'jerk';
-    }
+    
     var username = messageList[i].username;
     var time = messageList[i].createdAt;
+    
     if (app.roomList[messageList[i].roomname] === undefined) {
       app.roomList[messageList[i].roomname] = messageList[i].roomname;
     }
@@ -94,13 +92,28 @@ app.renderMessage = function (message) {
     var $chat = $('<div class ="chat"></div>');
     $('#chats').prepend($chat);
     $chat.append($('<p class=' + username + '"time">' + time + '</p>'));
-    $chat.append($('<a class=' + username + '>' + username + '</a>'));
-    $chat.append($('<p class=' + username + ' id="message">' + text + '</p>'));
+    var $user = $('<a class=' + username + '>' + username + '</a>');
+    // if (messageList[i].friendList !== undefined && messageList[i].friendList.length > 0) {
+    //   var friends = messageList[i].friendList;
+    //   console.log (friends);
+    //   if (friends.includes($user.attr('class'))) {
+    //     $user.addClass('isFriend');
+    //   }
+    // }
+    $chat.append($user);
+    var text = messageList[i].text;
+    if (text) {
+      if (text.includes('<script>')) {
+        text = 'jerk';
+      }
+      $chat.append($('<p class=' + username + ' id="message">' + text + '</p>'));
+    } 
   }
 
   app.handleUsernameClick();
   app.renderRoomlist(app.roomList);
 };
+
 
 
 app.renderRoomlist = function (roomList) {
@@ -117,12 +130,18 @@ app.handleSelectRoom = function () {
 };
 
 app.handleUsernameClick = function () {
+  
   $('a').on('click', function () {
-    alert('Event trigger');
-    //need to figure out manipulate data fetch from server
-    // create a friendlist for every user
-    // add a friend to current user's friendlist
-    // show it on page
+    var className = $(this).attr('class');
+    alert(`${className} is your friend now!`);
+    $(this).css({'font-weight': 'bold', 'color': 'red'});
+    // var message = {
+    //   username: window.location.search.slice(10),
+    //   // text: $('textarea').val(),
+    //   roomname: $(':selected').val(),
+    //   friendList: 'test'
+    // };
+    // app.send(JSON.stringify(message));
   });
 };
 
