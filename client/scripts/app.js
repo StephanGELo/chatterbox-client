@@ -3,6 +3,7 @@ app.init = function() {
   $(document).ready(function() {
     app.fetch();
     app.handleSubmit();
+    // app.handleSelectRoom();
   });
 
 };
@@ -15,8 +16,9 @@ app.send = function(message) {
     data: message,
     contentType: 'application/json',
     success: function(data) {
-      app.fetch(data); 
-      console.log (data);
+      app.fetch(); 
+      console.log ('sendout data: ', data);
+      // app.init();
       console.log ('chatterbox: Message sent');
     },
 
@@ -32,8 +34,9 @@ app.fetch = function() {
     data: {'order': '-createdAt'},
     dataType: 'json',
     success: function(data) {
-      console.log (data);
-      app.renderMessage(data); 
+      $('.chat').remove();
+      console.log ('getback data: ', data);
+      app.renderMessage(data);
       console.log ('chatterbox: Message received');
     },
     
@@ -42,6 +45,24 @@ app.fetch = function() {
     }
   });
 };
+
+// app.fetchRoom = function() {
+//   $.ajax({
+//     url: 'http://parse.sfs.hackreactor.com/chatterbox/classes/messages',
+//     type: 'GET',
+//     data: {'order': '-createdAt', 'where': {'username': $(':selected').val()}},
+//     dataType: 'json',
+//     success: function(data) {
+//       $('.chat').remove();
+//       console.log ('getback data: ', data);
+//       app.renderMessage(data);
+//       console.log ('chatterbox: Message received');
+//     },
+//     error: function(data) {
+//       console.error('chatterbox: Failed to retrieve message', data);
+//     }
+//   });
+// };
 
 app.clearMessages = function() {
   //clear client side message
@@ -63,20 +84,29 @@ app.renderMessage = function (message) {
     if (roomList[messageList[i].roomname] === undefined) {
       roomList[messageList[i].roomname] = messageList[i].roomname;
     }
-    $('#chats').prepend($('<div class ="chat"></div>'));
-    $('.chat').append($('<p class=' + username + '"time">' + time + '</p>'));
-    $('.chat').append($('<a class=' + username + '>' + username + '</a>'));
-    $('.chat').append($('<p class=' + username + ' id="message">' + text + '</p>'));
+    var $chat = $('<div class ="chat"></div>');
+    $('#chats').prepend($chat);
+    $chat.append($('<p class=' + username + '"time">' + time + '</p>'));
+    $chat.append($('<a class=' + username + '>' + username + '</a>'));
+    $chat.append($('<p class=' + username + ' id="message">' + text + '</p>'));
   }
   app.handleUsernameClick();
   app.renderRoom(roomList);
 };
 
+
 app.renderRoom = function (roomList) {
+  $('option').remove();
   for (var key in roomList) {
     $('.rooms').append($('<option value=' + roomList[key] + '>' + roomList[key] + '</option>'));
   }
 };
+
+// app.handleSelectRoom = function () {
+//   $('option').on('change', function () {
+//     alert('Event trigger');
+//   });
+// };
 
 app.handleUsernameClick = function () {
   $('a').on('click', function () {
