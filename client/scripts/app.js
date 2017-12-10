@@ -15,7 +15,8 @@ app.send = function(message) {
     data: message,
     contentType: 'application/json',
     success: function(data) {
-      app.fetch(); 
+      app.fetch(data); 
+      console.log (data);
       console.log ('chatterbox: Message sent');
     },
 
@@ -28,14 +29,16 @@ app.fetch = function() {
   $.ajax({
     url: 'http://parse.sfs.hackreactor.com/chatterbox/classes/messages',
     type: 'GET',
-    contentType: 'application/json',
+    data: {'order': '-createdAt'},
+    dataType: 'json',
     success: function(data) {
+      console.log (data);
       app.renderMessage(data); 
-      console.log ('chatterbox: Message sent');
+      console.log ('chatterbox: Message received');
     },
     
     error: function(data) {
-      console.error('chatterbox: Failed to send message', data);
+      console.error('chatterbox: Failed to retrieve message', data);
     }
   });
 };
@@ -52,17 +55,18 @@ app.clearMessages = function() {
 app.renderMessage = function (message) {
   var messageList = message.results;
   var roomList = {};
-  console.log (messageList);
-  for (var i = messageList.length - 1; i > messageList.length - 21; i--) {
+  // console.log (messageList);
+  for (var i = messageList.length - 1; i > 0; i--) {
     var text = messageList[i].text;
     var username = messageList[i].username;
     var time = messageList[i].createdAt;
     if (roomList[messageList[i].roomname] === undefined) {
       roomList[messageList[i].roomname] = messageList[i].roomname;
     }
-    $('#chats').append($('<p class=' + username + '"time">' + time + '</p>'));
-    $('#chats').append($('<a class=' + username + '>' + username + '</a>'));
-    $('#chats').append($('<p class=' + username + ' id="message">' + text + '</p>'));
+    $('#chats').prepend($('<div class ="chat"></div>'));
+    $('.chat').append($('<p class=' + username + '"time">' + time + '</p>'));
+    $('.chat').append($('<a class=' + username + '>' + username + '</a>'));
+    $('.chat').append($('<p class=' + username + ' id="message">' + text + '</p>'));
   }
   app.handleUsernameClick();
   app.renderRoom(roomList);
@@ -85,13 +89,13 @@ app.handleUsernameClick = function () {
 };
 
 app.handleSubmit = function () {
-  var message = {
-    username: 'shawndrost',
-    text: 'trololo',
-    roomname: '4chan'
-  };
   $('#send.submit').on('click', function () {
-    
+    var message = {
+      username: window.location.search.slice(10),
+      text: $('textarea').val(),
+      roomname: $(':selected').val()
+    };
+    console.log(message);
     app.send(JSON.stringify(message));
   });
 };
